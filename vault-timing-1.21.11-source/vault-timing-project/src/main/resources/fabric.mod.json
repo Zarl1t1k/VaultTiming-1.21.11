@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "vault-timing",
+	"version": "${version}",
+	"name": "Vault Timing",
+	"description": "This is a serverside mod that modify the vaults, so that players actually end up with the item that is displayed when they right click!",
+	"authors": [
+		"John Adept"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "ARR",
+	"icon": "assets/vault-timing/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"de.johnadept.VaultTiming"
+		]
+	},
+	"mixins": [
+		"vault-timing.mixins.json"
+	],
+	"accessWidener": "vault-timing.accessWidener",
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

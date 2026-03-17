@@ -1,0 +1,19 @@
+accessWidener	v2	named
+
+transitive-accessible	class	net/minecraft/block/vault/VaultBlockEntity$Server
+transitive-accessible	method	net/minecraft/block/vault/VaultBlockEntity$Server	tryUnlock	(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/vault/VaultConfig;Lnet/minecraft/block/vault/VaultServerData;Lnet/minecraft/block/vault/VaultSharedData;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/Hand;)V
+transitive-accessible	method	net/minecraft/block/vault/VaultBlockEntity$Server	unlock	(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/vault/VaultConfig;Lnet/minecraft/block/vault/VaultServerData;Lnet/minecraft/block/vault/VaultSharedData;Ljava/util/List;)V
+transitive-accessible	method	net/minecraft/block/vault/VaultBlockEntity$Server	playFailedUnlockSound	(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/block/vault/VaultServerData;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/sound/SoundEvent;)V
+transitive-accessible	method	net/minecraft/block/vault/VaultBlockEntity$Server	generateLoot	(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/block/vault/VaultConfig;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/PlayerEntity;)Ljava/util/List;
+
+transitive-accessible	class	net/minecraft/block/vault/VaultServerData
+transitive-accessible	method	net/minecraft/block/vault/VaultServerData	setLastInteractTime	(J)V
+transitive-accessible	method	net/minecraft/block/vault/VaultServerData	getLastInteractTime	()J
+transitive-accessible	method	net/minecraft/block/vault/VaultServerData	hasRewardedPlayer	(Lnet/minecraft/entity/player/PlayerEntity;)Z
+transitive-accessible	method	net/minecraft/block/vault/VaultServerData	setItemsToEject	(Ljava/util/List;)V
+transitive-accessible	method	net/minecraft/block/vault/VaultServerData	setNextEjectTime	(J)V
+transitive-accessible	method	net/minecraft/block/vault/VaultServerData	addToRewardedPlayers	(Lnet/minecraft/entity/player/PlayerEntity;)V
+
+transitive-accessible	class	net/minecraft/block/vault/VaultSharedData
+transitive-accessible	method	net/minecraft/block/vault/VaultSharedData	getDisplayItem	()Lnet/minecraft/item/ItemStack;
+transitive-accessible	method	net/minecraft/block/vault/VaultSharedData	updateConnectedPlayers	(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/vault/VaultServerData;Lnet/minecraft/block/vault/VaultConfig;D)V
