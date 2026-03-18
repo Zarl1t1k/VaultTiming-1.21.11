@@ -9,8 +9,8 @@ import net.minecraft.block.vault.VaultSharedData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Mixin(VaultBlockEntity.Server.class)
 public abstract class VaultBlockEntityMixin {
@@ -47,34 +48,34 @@ public abstract class VaultBlockEntityMixin {
             Hand hand,
             CallbackInfo ci
     ) {
-        System.out.println("Executing tryUnlock");
-
         try {
             if (!isValidKey(config, stack)) {
                 invokePlayFailedUnlockSound(world, serverData, pos, SoundEvents.BLOCK_VAULT_REJECT_REWARDED_PLAYER);
                 return;
             }
 
-            if (!serverData.hasRewardedPlayer(player)) {
-                boolean isOminous = state.get(net.minecraft.block.VaultBlock.OMINOUS);
-
-                if (!isOminous && !world.getGameRules().getBoolean(VaultTiming.SHOULD_MODIFY_NON_OMINOUS_VAULTS)) {
-                    return;
-                }
-
-                ci.cancel();
-                List<ItemStack> lootItems = new ArrayList<>();
-                lootItems.add(sharedData.getDisplayItem().copy());
-
-                if (world.getGameRules().getBoolean(VaultTiming.SHOULD_ALSO_DROP_DEFAULT_LOOT)) {
-                    lootItems.addAll(invokeGenerateLoot(world, config, pos, player, stack));
-                }
-
-                stack.decrement(config.keyItem().getCount());
-                invokeUnlock(world, state, pos, config, serverData, sharedData, lootItems);
-            } else {
+            UUID uuid = player.getUuid();
+            if (serverData.getRewardedPlayers().contains(uuid)) {
                 invokePlayFailedUnlockSound(world, serverData, pos, SoundEvents.BLOCK_VAULT_REJECT_REWARDED_PLAYER);
+                return;
             }
+
+            boolean isOminous = state.get(net.minecraft.block.VaultBlock.OMINOUS);
+
+            if (!isOminous && !world.getGameRules().getBoolean(VaultTiming.SHOULD_MODIFY_NON_OMINOUS_VAULTS)) {
+                return;
+            }
+
+            ci.cancel();
+            List<ItemStack> lootItems = new ArrayList<>();
+            lootItems.add(sharedData.getDisplayItem().copy());
+
+            if (world.getGameRules().getBoolean(VaultTiming.SHOULD_ALSO_DROP_DEFAULT_LOOT)) {
+                lootItems.addAll(invokeGenerateLoot(world, config, pos, player, stack));
+            }
+
+            stack.decrement(config.keyItem().getCount());
+            invokeUnlock(world, state, pos, config, serverData, sharedData, lootItems);
 
         } catch (Exception e) {
             e.printStackTrace();
