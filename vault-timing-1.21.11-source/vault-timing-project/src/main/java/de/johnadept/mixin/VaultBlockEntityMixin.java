@@ -2,7 +2,7 @@ package de.johnadept.mixin;
 
 import de.johnadept.VaultTiming;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.vault.VaultBlockEntity;
+import net.minecraft.block.entity.VaultBlockEntity;
 import net.minecraft.block.vault.VaultConfig;
 import net.minecraft.block.vault.VaultServerData;
 import net.minecraft.block.vault.VaultSharedData;
@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -42,54 +43,39 @@ public class VaultBlockEntityMixin {
         System.out.println("Executing tryUnlock");
 
         try {
-            // Check if vault can be unlocked (has a key configured and key item is not empty)
-            if (config.keyItem().isEmpty()) {
-                return;
-            }
-
-            // Check if provided key matches the required key
             if (!isValidKey(config, stack)) {
-                VaultBlockEntity.Server.playFailedUnlockSound(world, serverData, pos, config.failedUnlockSound());
+                VaultBlockEntity.Server.playFailedUnlockSound(world, serverData, pos,
+                        net.minecraft.sound.SoundEvents.BLOCK_VAULT_REJECT_REWARDED_PLAYER);
                 return;
             }
 
-            // Check if player already received a reward from this vault
             if (serverData.hasRewardedPlayer(player)) {
-                VaultBlockEntity.Server.playFailedUnlockSound(world, serverData, pos, config.failedUnlockSound());
+                VaultBlockEntity.Server.playFailedUnlockSound(world, serverData, pos,
+                        net.minecraft.sound.SoundEvents.BLOCK_VAULT_REJECT_REWARDED_PLAYER);
                 return;
             }
 
-            // Check gamerule for non-ominous vaults
             boolean isOminous = state.get(net.minecraft.block.VaultBlock.OMINOUS);
             List<ItemStack> lootItems = new ArrayList<>();
 
             if (isOminous) {
-                // Ominous vault: always apply the fix
                 ci.cancel();
-                ItemStack displayedItem = sharedData.getDisplayItem().copy();
-                lootItems.add(displayedItem);
-
+                lootItems.add(sharedData.getDisplayItem().copy());
                 if (world.getGameRules().getBoolean(VaultTiming.SHOULD_ALSO_DROP_DEFAULT_LOOT)) {
                     lootItems.addAll(VaultBlockEntity.Server.generateLoot(world, config, pos, player));
                 }
             } else {
-                // Non-ominous vault: only apply fix if gamerule enabled
                 if (!world.getGameRules().getBoolean(VaultTiming.SHOULD_MODIFY_NON_OMINOUS_VAULTS)) {
                     return;
                 }
                 ci.cancel();
-                ItemStack displayedItem = sharedData.getDisplayItem().copy();
-                lootItems.add(displayedItem);
-
+                lootItems.add(sharedData.getDisplayItem().copy());
                 if (world.getGameRules().getBoolean(VaultTiming.SHOULD_ALSO_DROP_DEFAULT_LOOT)) {
                     lootItems.addAll(VaultBlockEntity.Server.generateLoot(world, config, pos, player));
                 }
             }
 
-            // Give key damage / consume key
-            stack.damage(config.keyItem().getCount(), player, net.minecraft.util.Hand.MAIN_HAND);
-
-            // Eject items and mark player as rewarded
+            stack.decrement(config.keyItem().getCount());
             VaultBlockEntity.Server.unlock(world, state, pos, config, serverData, sharedData, lootItems);
 
         } catch (Exception e) {
